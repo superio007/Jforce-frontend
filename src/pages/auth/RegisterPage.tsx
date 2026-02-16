@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 type FormValues = {
   Username: string;
@@ -8,7 +8,24 @@ type FormValues = {
   Pass: string;
   Fullname: string;
 };
+
+type payLoad = {
+  username: string;
+  email: string;
+  password: string;
+  full_name: string;
+};
+
+const postUser = async (payLoad: FormValues) => {
+  const res = await axios.post(
+    "http://localhost:3001/api/auth/register",
+    payLoad,
+  );
+  return res?.data?.data;
+};
+
 const Register = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,16 +33,24 @@ const Register = () => {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     console.log("Form Data:", data);
-
-    Swal.fire({
-      icon: "success",
-      title: "Message Sent",
-      text: "We will contact you shortly.",
-      confirmButtonColor: "#33afe3",
-    });
-
+    const PayLoad: payLoad = {
+      username: data?.Username,
+      email: data?.Email,
+      password: data?.Pass,
+      full_name: data?.Fullname,
+    };
+    const result = await postUser(PayLoad as any);
+    if (result) {
+      const payload: any = {
+        token: result?.token,
+        userId: result?.user?.user_id,
+      };
+      console.log(payload);
+      localStorage.setItem("user", JSON.stringify(payload));
+      navigate("/");
+    }
     reset();
   };
   return (
@@ -63,7 +88,7 @@ const Register = () => {
                   {...register("Pass", { required: "Password is required" })}
                   className="form-input rounded border-[#cfe7e7] bg-[#f6f8f7] h-14 px-4 text-base"
                   placeholder="Enter your password"
-                  type="text"
+                  type="password"
                 />
                 {errors.Pass && (
                   <p className="text-red-500 text-sm">{errors.Pass.message}</p>
@@ -113,7 +138,7 @@ const Register = () => {
               </button>
               <p className="text-center capitalize">
                 If you are user?{" "}
-                <Link to={"/signin"} className="text-[#33afe3]">
+                <Link to={"/auth/signin"} className="text-[#33afe3]">
                   login now
                 </Link>
               </p>

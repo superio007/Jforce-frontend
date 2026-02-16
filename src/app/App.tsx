@@ -41,7 +41,7 @@ function App() {
           }
         />
         <Route
-          path="/expenses/add-expense"
+          path="/expenses/:action"
           element={
             <Suspense fallback={<FallbackLoader />}>
               <ExpenseForm />
@@ -49,7 +49,7 @@ function App() {
           }
         />
         <Route
-          path="/expenses/update-expense"
+          path="/expenses/:action/:id"
           element={
             <Suspense fallback={<FallbackLoader />}>
               <ExpenseForm />

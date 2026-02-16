@@ -1,10 +1,18 @@
 import { useForm } from "react-hook-form";
-import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
+type Payload = {
+  email: string;
+  password: string;
+};
 type FormValues = {
   Email: string;
   Pass: string;
+};
+const postSignin = async (payload: Payload) => {
+  const res = await axios.post("http://localhost:3001/api/auth/login", payload);
+  return res?.data?.data;
 };
 const Signin = () => {
   const {
@@ -13,16 +21,23 @@ const Signin = () => {
     reset,
     formState: { errors },
   } = useForm<FormValues>();
-
-  const onSubmit = (data: FormValues) => {
+  const navigate = useNavigate();
+  const onSubmit = async (data: FormValues) => {
     console.log("Form Data:", data);
-
-    Swal.fire({
-      icon: "success",
-      title: "Message Sent",
-      text: "We will contact you shortly.",
-      confirmButtonColor: "#33afe3",
-    });
+    const Payload: any = {
+      email: data?.Email,
+      password: data?.Pass,
+    };
+    const result = await postSignin(Payload as any);
+    if (result) {
+      const payload: any = {
+        token: result?.token,
+        userId: result?.user?.user_id,
+      };
+      console.log(payload);
+      localStorage.setItem("user", JSON.stringify(payload));
+      navigate("/");
+    }
 
     reset();
   };
@@ -73,7 +88,7 @@ const Signin = () => {
               </button>
               <p className="text-center capitalize">
                 If you are new?{" "}
-                <Link to={"/register"} className="text-[#33afe3]">
+                <Link to={"/auth/register"} className="text-[#33afe3]">
                   register now
                 </Link>
               </p>

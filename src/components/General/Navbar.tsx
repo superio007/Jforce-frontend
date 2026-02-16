@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
+  const navigate = useNavigate();
+  const handlelogOut = () => {
+    localStorage.removeItem("user");
+    navigate("/auth/signin");
+  };
   return (
     <>
       <div className="bg-amber-50 w-full p-4 space-y-2 text-center">
@@ -17,6 +23,12 @@ const Navbar = () => {
             Expenses
           </Link>
         </div>
+        <button
+          onClick={() => handlelogOut()}
+          className="bg-red-400 text-white rounded p-2 hover:cursor-pointer hover:opacity-90"
+        >
+          Log out
+        </button>
       </div>
     </>
   );
