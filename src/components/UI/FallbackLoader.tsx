@@ -1,6 +1,6 @@
 const FallbackLoader = () => {
   return (
-    <div className="h-80 w-full bg-gray-200">
+    <div className="h-screen w-full bg-gray-200">
       <div
         style={{
           display: "flex",

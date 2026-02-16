@@ -3,12 +3,12 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
 type FormValues = {
-  Username: string;
-  Email: string;
-  Pass: string;
-  Fullname: string;
+  Expensename: string;
+  Amount: string;
+  Date: string;
+  Description: string;
 };
-const Register = () => {
+const ExpenseForm = () => {
   const {
     register,
     handleSubmit,
@@ -39,69 +39,72 @@ const Register = () => {
               onSubmit={handleSubmit(onSubmit)}
             >
               <div className="flex flex-col gap-2">
-                <label htmlFor="Username" className="text-sm font-semibold">
-                  User Name
+                <label htmlFor="Expensename" className="text-sm font-semibold">
+                  Expense Name
                 </label>
                 <input
-                  {...register("Username", {
-                    required: "Username is required",
+                  {...register("Expensename", {
+                    required: "Expensename is required",
                   })}
-                  id="Username"
+                  id="Expensename"
                   className="form-input rounded border-[#cfe7e7] bg-[#f6f8f7] h-14 px-4 text-base"
-                  placeholder="Enter your username"
+                  placeholder="Enter your Expensename"
                   type="text"
                 />
-                {errors.Username && (
+                {errors.Expensename && (
                   <p className="text-red-500 text-sm">
-                    {errors.Username.message}
+                    {errors.Expensename.message}
                   </p>
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold">Password</label>
+                <label className="text-sm font-semibold">Amount</label>
                 <input
-                  {...register("Pass", { required: "Password is required" })}
-                  className="form-input rounded border-[#cfe7e7] bg-[#f6f8f7] h-14 px-4 text-base"
-                  placeholder="Enter your password"
-                  type="text"
-                />
-                {errors.Pass && (
-                  <p className="text-red-500 text-sm">{errors.Pass.message}</p>
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="Email" className="text-sm font-semibold">
-                  Email
-                </label>
-                <input
-                  {...register("Email", {
-                    required: "Email is required",
+                  {...register("Amount", {
+                    required: "Amount is required",
                   })}
-                  id="Email"
                   className="form-input rounded border-[#cfe7e7] bg-[#f6f8f7] h-14 px-4 text-base"
-                  placeholder="Enter your email"
-                  type="email"
+                  placeholder="Enter your amount"
+                  type="number"
                 />
-                {errors.Email && (
-                  <p className="text-red-500 text-sm">{errors.Email.message}</p>
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="Fullname" className="text-sm font-semibold">
-                  Full Name
-                </label>
-                <input
-                  {...register("Fullname", {
-                    required: "Full name is required",
-                  })}
-                  id="Fullname"
-                  className="form-input rounded border-[#cfe7e7] bg-[#f6f8f7] h-14 px-4 text-base"
-                  placeholder="Enter your full name"
-                  type="text"
-                />
-                {errors.Fullname && (
+                {errors.Amount && (
                   <p className="text-red-500 text-sm">
-                    {errors.Fullname.message}
+                    {errors.Amount.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="Date" className="text-sm font-semibold">
+                  Date
+                </label>
+                <input
+                  {...register("Date", {
+                    required: "Amount is required",
+                  })}
+                  id="Date"
+                  className="form-input rounded border-[#cfe7e7] bg-[#f6f8f7] h-14 px-4 text-base"
+                  placeholder="Enter your Date"
+                  type="date"
+                />
+                {errors.Date && (
+                  <p className="text-red-500 text-sm">{errors.Date.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="Description" className="text-sm font-semibold">
+                  Description
+                </label>
+                <textarea
+                  {...register("Description", {
+                    required: "Description is required",
+                  })}
+                  id="Description"
+                  className="form-input rounded border-[#cfe7e7] bg-[#f6f8f7] p-4 text-base"
+                  placeholder="Enter your full name"
+                />
+                {errors.Description && (
+                  <p className="text-red-500 text-sm">
+                    {errors.Description.message}
                   </p>
                 )}
               </div>
@@ -111,12 +114,6 @@ const Register = () => {
               >
                 Submit
               </button>
-              <p className="text-center capitalize">
-                If you are user?{" "}
-                <Link to={"/signin"} className="text-[#33afe3]">
-                  login now
-                </Link>
-              </p>
             </form>
           </div>
         </div>
@@ -125,4 +122,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default ExpenseForm;
