@@ -36,7 +36,7 @@ const Expense = () => {
   }
   return (
     <>
-      <div className="bg-amber-100 w-full">
+      <div className="bg-amber-100 min-h-screen w-full">
         <div className="container mx-auto p-8 flex flex-col space-y-6 justify-center items-center">
           <h2 className="text-xl font-bold text-center">Expense List</h2>
           <div className="flex flex-col gap-3 w-full">
@@ -63,6 +63,21 @@ const Expense = () => {
                 </button>
               </div>
             ))}
+            {expenses.length === 0 && (
+              <div className="rounded bg-amber-50 space-y-3 p-3  w-full">
+                <h3 className="text-xl font-bold text-center">
+                  No expense found
+                </h3>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => navigate(`/expenses/add-expense`)}
+                    className="p-2 rounded hover:cursor-pointer  hover:opacity-90 bg-[#33afe3] text-white"
+                  >
+                    Have some
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -98,6 +98,7 @@ const ExpenseForm = () => {
     } else {
       await addExpense(payload);
       reset(); // clear form only when adding
+      navigate("/expenses");
     }
   };
 

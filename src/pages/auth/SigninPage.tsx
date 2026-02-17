@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useState } from "react";
 
 type Payload = {
   email: string;
@@ -22,24 +23,41 @@ const Signin = () => {
     formState: { errors },
   } = useForm<FormValues>();
   const navigate = useNavigate();
+  const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
   const onSubmit = async (data: FormValues) => {
+    setApiError("");
+    setLoading(true);
     console.log("Form Data:", data);
     const Payload: any = {
       email: data?.Email,
       password: data?.Pass,
     };
-    const result = await postSignin(Payload as any);
-    if (result) {
-      const payload: any = {
-        token: result?.token,
-        userId: result?.user?.user_id,
-      };
-      console.log(payload);
-      localStorage.setItem("user", JSON.stringify(payload));
-      navigate("/");
-    }
+    try {
+      const result = await postSignin(Payload as any);
+      if (result) {
+        const payload: any = {
+          token: result?.token,
+          userId: result?.user?.user_id,
+        };
+        console.log(payload);
+        localStorage.setItem("user", JSON.stringify(payload));
+        navigate("/");
+      }
 
-    reset();
+      reset();
+    } catch (error: any) {
+      if (error.response) {
+        // Backend returned error
+        setApiError(error.response.data?.message || "Registration failed");
+      } else if (error.request) {
+        setApiError("Server not responding. Try again later.");
+      } else {
+        setApiError("Something went wrong.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -81,11 +99,18 @@ const Signin = () => {
                 )}
               </div>
               <button
-                className="w-full bg-[#33afe3] cursor-pointer hover:opacity-90 text-white font-bold py-4 rounded text-lg hover:shadow-lg transition-all"
+                disabled={loading}
+                className="w-full bg-[#33afe3] cursor-pointer hover:opacity-90 text-white font-bold py-4 rounded text-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 type="submit"
               >
-                Submit
+                {loading ? "Processing..." : "Submit"}
               </button>
+
+              {apiError && (
+                <p className="text-red-600 text-sm text-center font-medium">
+                  {apiError}
+                </p>
+              )}
               <p className="text-center capitalize">
                 If you are new?{" "}
                 <Link to={"/auth/register"} className="text-[#33afe3]">

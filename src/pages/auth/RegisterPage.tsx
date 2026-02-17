@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 type FormValues = {
   Username: string;
@@ -26,6 +27,9 @@ const postUser = async (payLoad: FormValues) => {
 
 const Register = () => {
   const navigate = useNavigate();
+  const [apiError, setApiError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -34,24 +38,45 @@ const Register = () => {
   } = useForm<FormValues>();
 
   const onSubmit = async (data: FormValues) => {
-    console.log("Form Data:", data);
-    const PayLoad: payLoad = {
-      username: data?.Username,
-      email: data?.Email,
-      password: data?.Pass,
-      full_name: data?.Fullname,
+    setApiError("");
+    setLoading(true);
+
+    const payload: payLoad = {
+      username: data.Username,
+      email: data.Email,
+      password: data.Pass,
+      full_name: data.Fullname,
     };
-    const result = await postUser(PayLoad as any);
-    if (result) {
-      const payload: any = {
-        token: result?.token,
-        userId: result?.user?.user_id,
+
+    try {
+      const res = await postUser(payload as any);
+
+      const result = res?.data?.data;
+
+      if (!result?.token) {
+        throw new Error("Invalid server response");
+      }
+
+      const userPayload = {
+        token: result.token,
+        userId: result.user?.user_id,
       };
-      console.log(payload);
-      localStorage.setItem("user", JSON.stringify(payload));
+
+      localStorage.setItem("user", JSON.stringify(userPayload));
+      reset();
       navigate("/");
+    } catch (error: any) {
+      if (error.response) {
+        // Backend returned error
+        setApiError(error.response.data?.message || "Registration failed");
+      } else if (error.request) {
+        setApiError("Server not responding. Try again later.");
+      } else {
+        setApiError("Something went wrong.");
+      }
+    } finally {
+      setLoading(false);
     }
-    reset();
   };
   return (
     <>
@@ -131,11 +156,19 @@ const Register = () => {
                 )}
               </div>
               <button
-                className="w-full bg-[#33afe3] cursor-pointer hover:opacity-90 text-white font-bold py-4 rounded text-lg hover:shadow-lg transition-all"
+                disabled={loading}
+                className="w-full bg-[#33afe3] cursor-pointer hover:opacity-90 text-white font-bold py-4 rounded text-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 type="submit"
               >
-                Submit
+                {loading ? "Processing..." : "Submit"}
               </button>
+
+              {apiError && (
+                <p className="text-red-600 text-sm text-center font-medium">
+                  {apiError}
+                </p>
+              )}
+
               <p className="text-center capitalize">
                 If you are user?{" "}
                 <Link to={"/auth/signin"} className="text-[#33afe3]">
